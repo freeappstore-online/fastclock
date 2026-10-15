@@ -41,14 +41,16 @@ jobs:
           for i in $(seq 1 30); do curl -sf http://localhost:4173/ > /dev/null && exit 0; sleep 1; done
           cat preview.log; exit 1
 
-      - name: Playwright e2e
-        run: pnpm exec playwright test
-
+      # Before Playwright: fas check scans the repo, and would flag the HTML report
+      # Playwright writes (non-brand fonts).
       - name: fas check
         run: npx -y @freeappstore/cli@0.4 check
 
       - name: fas screencheck (portrait + landscape)
         run: npx -y @freeappstore/cli@0.4 screencheck --skip-build
+
+      - name: Playwright e2e
+        run: pnpm exec playwright test
 
       - uses: actions/upload-artifact@v4
         if: failure()
