@@ -33,6 +33,7 @@ import {
   startFast,
   toLocalInput,
 } from './fast'
+import StagesTimeline from './StagesTimeline'
 import type { FastRecord } from './types'
 
 // Re-render every second while a fast runs, and immediately when the tab
@@ -107,6 +108,7 @@ export default function Timer() {
         {!fast && last && <EatingWindow last={last} goal={goal} now={now} />}
       </section>
       <GoalPicker goal={goal} onChange={chooseGoal} />
+      <StagesTimeline fast={fast} now={now} />
       <PastFasts fasts={fasts} now={now} onSaved={reload} />
     </>
   )
