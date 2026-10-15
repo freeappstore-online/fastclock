@@ -1,6 +1,6 @@
 {
   "name": "fastclock",
-  "description": "A free intermittent fasting timer with presets and a live progress ring. Private and offline.",
+  "description": "A free intermittent fasting timer with presets, history and streaks. Private and offline.",
   "private": true,
   "packageManager": "pnpm@10.30.3",
   "engines": {
