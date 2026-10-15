@@ -1,3 +1,5 @@
+import type { FastRecord } from './types'
+
 // Timer core: pure functions over absolute instants, plus localStorage persistence.
 //
 // Every instant is an epoch-millisecond number (UTC), and every duration is a
@@ -184,4 +186,144 @@ export function loadGoal(store: KeyValueStore): Goal {
 
 export function saveGoal(store: KeyValueStore, goal: Goal): void {
   store.setItem(GOAL_KEY, JSON.stringify(goal))
+}
+
+// ---------------------------------------------------------------------------
+// Completed fasts, editing, and the eating window.
+
+export const FASTS_KEY = 'fastclock.fasts'
+
+function isFastRecord(value: unknown): value is FastRecord {
+  if (typeof value !== 'object' || value === null) return false
+  const v = value as Record<string, unknown>
+  return (
+    typeof v.id === 'string' &&
+    [v.startMs, v.endMs, v.goalMs].every((n) => typeof n === 'number' && Number.isFinite(n)) &&
+    (v.endMs as number) > (v.startMs as number)
+  )
+}
+
+/** Completed fasts, oldest first. */
+export function loadFasts(store: KeyValueStore): FastRecord[] {
+  const value = readJson(store, FASTS_KEY)
+  if (!Array.isArray(value)) return []
+  return value
+    .filter(isFastRecord)
+    .map(({ id, startMs, endMs, goalMs }) => ({ id, startMs, endMs, goalMs }))
+    .sort((a, b) => a.startMs - b.startMs)
+}
+
+export function saveFasts(store: KeyValueStore, fasts: FastRecord[]): void {
+  store.setItem(FASTS_KEY, JSON.stringify([...fasts].sort((a, b) => a.startMs - b.startMs)))
+}
+
+/** The most recently ended fast, if any. */
+export function lastFast(fasts: FastRecord[]): FastRecord | null {
+  return fasts.reduce<FastRecord | null>((last, f) => (!last || f.endMs > last.endMs ? f : last), null)
+}
+
+/** Fasts shorter than this are treated as accidental taps and not recorded. */
+export const MIN_RECORDED_MS = MINUTE
+
+/** End the running fast: record it (unless it was an accidental tap) and clear it. */
+export function endFast(store: KeyValueStore, fast: ActiveFast, now: number): FastRecord | null {
+  saveActiveFast(store, null)
+  if (now - fast.startedAt < MIN_RECORDED_MS) return null
+  const record: FastRecord = { id: crypto.randomUUID(), startMs: fast.startedAt, endMs: now, goalMs: fast.goalMs }
+  saveFasts(store, [...loadFasts(store), record])
+  return record
+}
+
+const overlaps = (aStart: number, aEnd: number, bStart: number, bEnd: number) => aStart < bEnd && bStart < aEnd
+
+/**
+ * Check a completed fast's times against the rules. `others` are the other
+ * completed fasts; `active` is the running fast, if any. Returns an error
+ * message, or null if the times are valid.
+ */
+export function validateFastTimes(
+  startMs: number,
+  endMs: number,
+  now: number,
+  others: FastRecord[],
+  active: ActiveFast | null,
+): string | null {
+  if (!Number.isFinite(startMs) || !Number.isFinite(endMs)) return 'Enter both a start and an end time.'
+  if (endMs <= startMs) return 'The end time must be after the start time.'
+  if (endMs > now) return "The end time can't be in the future."
+  const clash = others.find((f) => overlaps(startMs, endMs, f.startMs, f.endMs))
+  if (clash) return `These times overlap another fast (${describeInstant(clash.startMs, now)}).`
+  if (active && endMs > active.startedAt) return 'These times overlap your current fast.'
+  return null
+}
+
+/** Edit a completed fast. Returns an error message, or null once the change is saved. */
+export function editFast(
+  store: KeyValueStore,
+  id: string,
+  patch: { startMs?: number; endMs?: number },
+  now: number,
+): string | null {
+  const fasts = loadFasts(store)
+  const target = fasts.find((f) => f.id === id)
+  if (!target) return 'That fast no longer exists.'
+  const startMs = patch.startMs ?? target.startMs
+  const endMs = patch.endMs ?? target.endMs
+  const others = fasts.filter((f) => f.id !== id)
+  const error = validateFastTimes(startMs, endMs, now, others, loadActiveFast(store))
+  if (error) return error
+  saveFasts(store, [...others, { ...target, startMs, endMs }])
+  return null
+}
+
+/** Move the running fast's start time. Returns an error message, or null once saved. */
+export function editActiveFastStart(store: KeyValueStore, newStartMs: number, now: number): string | null {
+  const active = loadActiveFast(store)
+  if (!active) return 'There is no fast running.'
+  if (!Number.isFinite(newStartMs)) return 'Enter a start time.'
+  if (newStartMs > now) return "The start time can't be in the future."
+  const last = lastFast(loadFasts(store))
+  if (last && newStartMs < last.endMs)
+    return `The start time must be after your last fast ended (${describeInstant(last.endMs, now)}).`
+  saveActiveFast(store, { ...active, startedAt: newStartMs })
+  return null
+}
+
+const DAY_MS = 24 * HOUR
+
+/**
+ * The eating window that follows a fast with this goal: the rest of a 24-hour
+ * cycle (16h → 8h, OMAD 23h → 1h), or of a multi-day cycle for long fasts
+ * (36h → 12h, so the next fast starts at the same time two days later).
+ */
+export function eatingWindowMs(goalMs: number): number {
+  const cycle = Math.floor(goalMs / DAY_MS + 1) * DAY_MS
+  return cycle - goalMs
+}
+
+/** When the next planned fast starts. Pure ms arithmetic, so DST can't shift it. */
+export function nextFastAt(last: FastRecord, goalMs: number): number {
+  return last.endMs + eatingWindowMs(goalMs)
+}
+
+/** Milliseconds until the next planned fast starts, or 0 if that time has passed. */
+export function eatingWindowCountdown(last: FastRecord, goalMs: number, now: number): number {
+  return Math.max(0, nextFastAt(last, goalMs) - now)
+}
+
+// ---------------------------------------------------------------------------
+// <input type="datetime-local"> values are local wall-clock times.
+
+/** Epoch ms → "2026-10-31T20:00" in the device's time zone. */
+export function toLocalInput(instant: number): string {
+  const d = new Date(instant)
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
+}
+
+/** "2026-10-31T20:00" (device time zone) → epoch ms, or NaN if empty or invalid. */
+export function fromLocalInput(value: string): number {
+  const m = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/.exec(value)
+  if (!m) return Number.NaN
+  const [, y, mo, d, h, mi] = m.map(Number)
+  return new Date(y, mo - 1, d, h, mi).getTime()
 }

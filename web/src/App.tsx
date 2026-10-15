@@ -15,8 +15,6 @@ const NAV: NavItem[] = [
 
 // The features still to come in v1 (freeappstore-online/platform#203).
 const FEATURES = [
-  { name: 'Edit times', what: 'Fix a start or end time after the fact.' },
-  { name: 'Eating window', what: 'A countdown to your next planned fast.' },
   { name: 'Stages', what: 'A gentle timeline of general fasting phases, for information only.' },
   { name: 'History', what: 'Calendar, streak, average and longest fast, and a weekly chart.' },
   { name: 'Backup', what: 'Export your data any time. Everything stays on your device; no account.' },
