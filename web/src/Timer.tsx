@@ -12,7 +12,6 @@ import {
   describeInstant,
   eatingWindowCountdown,
   editActiveFastStart,
-  editFast,
   elapsedMs,
   endFast,
   formatClock,
@@ -33,28 +32,12 @@ import {
   startFast,
   toLocalInput,
 } from './fast'
+import { ErrorText, inputClass, linkButton, solidButton, useNow } from './controls'
+import { fastLength, goalMet } from './history'
 import StagesTimeline from './StagesTimeline'
 import type { FastRecord } from './types'
 
-// Re-render every second while a fast runs, and immediately when the tab
-// becomes visible again (timers are throttled in background tabs).
-function useNow(active: boolean): number {
-  const [now, setNow] = useState(() => Date.now())
-  useEffect(() => {
-    if (!active) return
-    const tick = () => setNow(Date.now())
-    tick()
-    const id = window.setInterval(tick, 1000)
-    document.addEventListener('visibilitychange', tick)
-    return () => {
-      window.clearInterval(id)
-      document.removeEventListener('visibilitychange', tick)
-    }
-  }, [active])
-  return now
-}
-
-export default function Timer() {
+export default function Timer({ onNavigate }: { onNavigate: (href: string) => void }) {
   const [fast, setFast] = useState<ActiveFast | null>(() => loadActiveFast(localStorage))
   const [goal, setGoal] = useState<Goal>(() => fast ?? loadGoal(localStorage))
   const [fasts, setFasts] = useState<FastRecord[]>(() => loadFasts(localStorage))
@@ -109,23 +92,23 @@ export default function Timer() {
       </section>
       <GoalPicker goal={goal} onChange={chooseGoal} />
       <StagesTimeline fast={fast} now={now} />
-      <PastFasts fasts={fasts} now={now} onSaved={reload} />
+      {last && (
+        <p className="mt-8 text-sm text-[var(--muted)]">
+          Last fast: {formatGoal(fastLength(last))} of {formatGoal(last.goalMs)}
+          {goalMet(last) ? ', goal reached' : ''}.{' '}
+          <a
+            href="/history"
+            className={linkButton}
+            onClick={(e) => {
+              e.preventDefault()
+              onNavigate('/history')
+            }}
+          >
+            See history
+          </a>
+        </p>
+      )}
     </>
-  )
-}
-
-const linkButton =
-  'min-h-11 px-2 text-sm font-semibold text-[var(--accent-deep)] underline underline-offset-2 hover:text-[var(--accent)] focus-visible:outline-2 focus-visible:outline-[var(--accent)]'
-const solidButton =
-  'min-h-11 rounded-full bg-[var(--accent)] px-5 text-sm font-semibold text-white hover:bg-[var(--accent-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]'
-const inputClass =
-  'min-h-11 rounded-[var(--radius)] border border-[var(--line-strong)] bg-[var(--paper)] px-3 text-[var(--ink)]'
-
-function ErrorText({ id, message }: { id: string; message: string | null }) {
-  return (
-    <p id={id} role="alert" className="text-sm font-medium text-[var(--danger)]">
-      {message}
-    </p>
   )
 }
 
@@ -210,123 +193,6 @@ function EatingWindow({ last, goal, now }: { last: FastRecord; goal: Goal; now: 
         <p className="text-sm text-[var(--muted)]">Your eating window has ended. Start your next fast when you're ready.</p>
       )}
     </div>
-  )
-}
-
-function PastFasts({ fasts, now, onSaved }: { fasts: FastRecord[]; now: number; onSaved: () => void }) {
-  if (fasts.length === 0) return null
-  const newestFirst = [...fasts].reverse()
-  return (
-    <section aria-labelledby="past-heading" className="mt-8">
-      <h2 id="past-heading" className="mb-3 font-semibold text-[var(--ink)]">
-        Past fasts
-      </h2>
-      <ul className="flex flex-col gap-2">
-        {newestFirst.map((f) => (
-          <PastFast key={f.id} fast={f} now={now} onSaved={onSaved} />
-        ))}
-      </ul>
-    </section>
-  )
-}
-
-function PastFast({ fast, now, onSaved }: { fast: FastRecord; now: number; onSaved: () => void }) {
-  const [editing, setEditing] = useState(false)
-  const [start, setStart] = useState('')
-  const [end, setEnd] = useState('')
-  const [error, setError] = useState<string | null>(null)
-  const errorId = `fast-${fast.id}-error`
-  const length = fast.endMs - fast.startMs
-
-  const open = () => {
-    setStart(toLocalInput(fast.startMs))
-    setEnd(toLocalInput(fast.endMs))
-    setError(null)
-    setEditing(true)
-  }
-
-  const save = (e: FormEvent) => {
-    e.preventDefault()
-    const message = editFast(
-      localStorage,
-      fast.id,
-      { startMs: fromLocalInput(start), endMs: fromLocalInput(end) },
-      Date.now(),
-    )
-    setError(message)
-    if (!message) {
-      setEditing(false)
-      onSaved()
-    }
-  }
-
-  return (
-    <li className="rounded-[var(--radius)] border border-[var(--line)] p-3">
-      {!editing ? (
-        <div className="flex items-center justify-between gap-3">
-          <div>
-            <p className="font-semibold text-[var(--ink)] tabular-nums">
-              {formatGoal(length)}
-              <span className="font-normal text-[var(--muted)]">
-                {' '}
-                of {formatGoal(fast.goalMs)}
-                {length >= fast.goalMs ? ' · goal reached' : ''}
-              </span>
-            </p>
-            <p className="text-sm text-[var(--muted)]">
-              {describeInstant(fast.startMs, now)} → {describeInstant(fast.endMs, now)}
-            </p>
-          </div>
-          <button
-            type="button"
-            className={linkButton}
-            onClick={open}
-            aria-label={`Edit fast started ${describeInstant(fast.startMs, now)}`}
-          >
-            ✎ Edit
-          </button>
-        </div>
-      ) : (
-        <form onSubmit={save} noValidate className="flex flex-col gap-2">
-          <div className="flex flex-wrap gap-3">
-            <label className="flex flex-col gap-1 text-sm text-[var(--ink)]">
-              Start
-              <input
-                type="datetime-local"
-                value={start}
-                max={toLocalInput(now)}
-                onChange={(e) => setStart(e.target.value)}
-                aria-invalid={error !== null}
-                aria-describedby={errorId}
-                className={inputClass}
-                autoFocus
-              />
-            </label>
-            <label className="flex flex-col gap-1 text-sm text-[var(--ink)]">
-              End
-              <input
-                type="datetime-local"
-                value={end}
-                max={toLocalInput(now)}
-                onChange={(e) => setEnd(e.target.value)}
-                aria-invalid={error !== null}
-                aria-describedby={errorId}
-                className={inputClass}
-              />
-            </label>
-          </div>
-          <ErrorText id={errorId} message={error} />
-          <div className="flex gap-2">
-            <button type="submit" className={solidButton}>
-              Save
-            </button>
-            <button type="button" className={linkButton} onClick={() => setEditing(false)}>
-              Cancel
-            </button>
-          </div>
-        </form>
-      )}
-    </li>
   )
 }
 

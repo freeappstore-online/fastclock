@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { initApp } from '@freeappstore/sdk'
 import { BuildInfo, type NavItem, PageHeader, Shell } from '@freeappstore/sdk/ui'
+import HistoryScreen from './HistoryScreen'
 import Timer from './Timer'
 
 const fas = initApp({ appId: 'fastclock' })
@@ -10,12 +11,12 @@ const fas = initApp({ appId: 'fastclock' })
 // tab title on that route.
 const NAV: NavItem[] = [
   { label: 'Timer', href: '/', title: 'FastClock' },
+  { label: 'History', href: '/history', title: 'History — FastClock' },
   { label: 'About', href: '/about', title: 'About — FastClock' },
 ]
 
 // The features still to come in v1 (freeappstore-online/platform#203).
 const FEATURES = [
-  { name: 'History', what: 'Calendar, streak, average and longest fast, and a weekly chart.' },
   { name: 'Backup', what: 'Export your data any time. Everything stays on your device; no account.' },
 ]
 
@@ -41,9 +42,11 @@ export default function App() {
       <div className="mx-auto w-full max-w-3xl p-4 sm:p-8">
         {path === '/about' ? (
           <About />
+        ) : path === '/history' ? (
+          <HistoryScreen />
         ) : (
           <>
-            <Timer />
+            <Timer onNavigate={navigate} />
             <ComingNext />
           </>
         )}
@@ -79,7 +82,7 @@ function About() {
       <p className="text-[var(--muted)]">
         FastClock is a simple, free timer for intermittent fasting: pick a goal, start a fast, and
         watch the clock. Your fast is saved on your device, so it keeps running if you close the
-        page. There's no account, no subscription and no ads. History and streaks are on the way.
+        page. There's no account, no subscription and no ads. Your history, streak and weekly chart are on the History screen.
         FastClock offers general information only, not medical advice.
       </p>
       <p className="mt-4 text-[var(--muted)]">

@@ -257,6 +257,15 @@ export function validateFastTimes(
   return null
 }
 
+/** Delete a completed fast. Returns false if it no longer exists. */
+export function deleteFast(store: KeyValueStore, id: string): boolean {
+  const fasts = loadFasts(store)
+  const remaining = fasts.filter((f) => f.id !== id)
+  if (remaining.length === fasts.length) return false
+  saveFasts(store, remaining)
+  return true
+}
+
 /** Edit a completed fast. Returns an error message, or null once the change is saved. */
 export function editFast(
   store: KeyValueStore,

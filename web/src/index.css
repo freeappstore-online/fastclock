@@ -53,6 +53,9 @@
   --panel-strong: rgba(255, 255, 255, 0.88);
   --panel-quiet: rgba(255, 255, 255, 0.6);
   --accent: #d86f4d;
+  /* Chart marks (validated with the dataviz palette checks against each surface). */
+  --chart-bar: #d86f4d;
+  --chart-bar-ink: #111111;
   --accent-soft: #ffd4bf;
   --accent-deep: #9f4427;
   --sky: #4c97b5;
@@ -100,6 +103,8 @@
   --panel-strong: rgba(18, 18, 18, 0.92);
   --panel-quiet: rgba(22, 22, 22, 0.8);
   --accent: #ff9b76;
+  --chart-bar: #d9744f;
+  --chart-bar-ink: #111111;
   --accent-soft: #3b2119;
   --accent-deep: #ffd9cb;
   --sky: #89cbe5;
