@@ -147,7 +147,7 @@ export function describeInstant(instant: number, now: number, locale?: string, t
 export const ACTIVE_KEY = 'fastclock.active'
 export const GOAL_KEY = 'fastclock.goal'
 
-type KeyValueStore = Pick<Storage, 'getItem' | 'setItem' | 'removeItem'>
+export type KeyValueStore = Pick<Storage, 'getItem' | 'setItem' | 'removeItem'>
 
 function readJson(store: KeyValueStore, key: string): unknown {
   try {
@@ -158,13 +158,13 @@ function readJson(store: KeyValueStore, key: string): unknown {
   }
 }
 
-function isGoal(value: unknown): value is Goal {
+export function isGoal(value: unknown): value is Goal {
   if (typeof value !== 'object' || value === null) return false
   const v = value as Record<string, unknown>
   return typeof v.presetId === 'string' && typeof v.goalMs === 'number' && Number.isFinite(v.goalMs) && v.goalMs > 0
 }
 
-function isActiveFast(value: unknown): value is ActiveFast {
+export function isActiveFast(value: unknown): value is ActiveFast {
   return isGoal(value) && typeof (value as ActiveFast).startedAt === 'number' && Number.isFinite((value as ActiveFast).startedAt)
 }
 
@@ -193,7 +193,7 @@ export function saveGoal(store: KeyValueStore, goal: Goal): void {
 
 export const FASTS_KEY = 'fastclock.fasts'
 
-function isFastRecord(value: unknown): value is FastRecord {
+export function isFastRecord(value: unknown): value is FastRecord {
   if (typeof value !== 'object' || value === null) return false
   const v = value as Record<string, unknown>
   return (

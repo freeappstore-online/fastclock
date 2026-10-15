@@ -4,8 +4,8 @@ FastClock: a free intermittent fasting timer on FreeAppStore — one-button time
 live progress ring, an eating-window countdown, an informational stages timeline, and a private
 history with streaks and a weekly chart. Everything stays on the device (localStorage). Built: timer core (start/end,
 presets, live ring), time editing, eating-window countdown, stages timeline, and History
-(calendar, list with edit/delete, streak, stats, weekly chart). Still to come (listed as "Coming
-next" on the Timer screen): backup/export. See freeappstore-online/platform#203.
+(calendar, list with edit/delete, streak, stats, weekly chart). Privacy screen: privacy
+note, JSON export/import, erase (`web/src/backup.ts`). v1 per freeappstore-online/platform#203 is complete.
 
 - Live: https://fastclock.freeappstore.online
 - Dev: `pnpm install && pnpm dev`

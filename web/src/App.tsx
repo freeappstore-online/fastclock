@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { initApp } from '@freeappstore/sdk'
 import { BuildInfo, type NavItem, PageHeader, Shell } from '@freeappstore/sdk/ui'
 import HistoryScreen from './HistoryScreen'
+import Privacy from './Privacy'
 import Timer from './Timer'
 
 const fas = initApp({ appId: 'fastclock' })
@@ -12,12 +13,8 @@ const fas = initApp({ appId: 'fastclock' })
 const NAV: NavItem[] = [
   { label: 'Timer', href: '/', title: 'FastClock' },
   { label: 'History', href: '/history', title: 'History — FastClock' },
+  { label: 'Privacy', href: '/privacy', title: 'Privacy — FastClock' },
   { label: 'About', href: '/about', title: 'About — FastClock' },
-]
-
-// The features still to come in v1 (freeappstore-online/platform#203).
-const FEATURES = [
-  { name: 'Backup', what: 'Export your data any time. Everything stays on your device; no account.' },
 ]
 
 export default function App() {
@@ -41,14 +38,13 @@ export default function App() {
     <Shell app={fas} appName="FastClock" nav={NAV} onNavigate={navigate}>
       <div className="mx-auto w-full max-w-3xl p-4 sm:p-8">
         {path === '/about' ? (
-          <About />
+          <About onNavigate={navigate} />
         ) : path === '/history' ? (
           <HistoryScreen />
+        ) : path === '/privacy' ? (
+          <Privacy />
         ) : (
-          <>
-            <Timer onNavigate={navigate} />
-            <ComingNext />
-          </>
+          <Timer onNavigate={navigate} />
         )}
       </div>
       <BuildInfo />
@@ -56,34 +52,29 @@ export default function App() {
   )
 }
 
-// Features that aren't built yet, labelled plainly as upcoming.
-function ComingNext() {
-  return (
-    <section aria-labelledby="next-heading" className="mt-10">
-      <h2 id="next-heading" className="mb-3 font-semibold text-[var(--ink)]">
-        Coming next
-      </h2>
-      <ul className="grid gap-3 sm:grid-cols-2">
-        {FEATURES.map((feature) => (
-          <li key={feature.name} className="rounded-[var(--radius)] border border-[var(--line)] p-4">
-            <p className="font-semibold text-[var(--ink)]">{feature.name}</p>
-            <p className="text-sm text-[var(--muted)]">{feature.what}</p>
-          </li>
-        ))}
-      </ul>
-    </section>
-  )
-}
-
-function About() {
+function About({ onNavigate }: { onNavigate: (href: string) => void }) {
   return (
     <>
       <PageHeader title="About" />
       <p className="text-[var(--muted)]">
         FastClock is a simple, free timer for intermittent fasting: pick a goal, start a fast, and
         watch the clock. Your fast is saved on your device, so it keeps running if you close the
-        page. There's no account, no subscription and no ads. Your history, streak and weekly chart are on the History screen.
-        FastClock offers general information only, not medical advice.
+        page. Your history, streak and weekly chart are on the History screen. There's no account, no
+        subscription and no ads. FastClock offers general information only, not medical advice.
+      </p>
+      <p className="mt-4 text-[var(--muted)]">
+        Everything you enter stays on this device.{' '}
+        <a
+          href="/privacy"
+          className="underline"
+          onClick={(e) => {
+            e.preventDefault()
+            onNavigate('/privacy')
+          }}
+        >
+          Read the privacy note and back up your data
+        </a>
+        .
       </p>
       <p className="mt-4 text-[var(--muted)]">
         FastClock is a free, MIT-licensed app on{' '}

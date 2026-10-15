@@ -1,7 +1,7 @@
 {
   "name": "FastClock",
   "short_name": "FastClock",
-  "description": "Coming soon — a free fasting timer with presets, history and streaks. Private and offline.",
+  "description": "A free intermittent fasting timer with presets, history and streaks. Private and offline.",
   "start_url": "/",
   "display": "standalone",
   "orientation": "any",
