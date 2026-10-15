@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { initApp } from '@freeappstore/sdk'
 import { BuildInfo, type NavItem, PageHeader, Shell } from '@freeappstore/sdk/ui'
+import Timer from './Timer'
 
 const fas = initApp({ appId: 'fastclock' })
 
@@ -12,15 +13,13 @@ const NAV: NavItem[] = [
   { label: 'About', href: '/about', title: 'About — FastClock' },
 ]
 
-// The features planned for v1 (freeappstore-online/platform#203).
+// The features still to come in v1 (freeappstore-online/platform#203).
 const FEATURES = [
-  { name: 'Timer', what: 'Start and end a fast with one button; a live ring shows progress to your goal.' },
-  { name: 'Presets', what: '13:11, 16:8, 18:6, 20:4, OMAD 23:1 and 36h, or set your own.' },
   { name: 'Edit times', what: 'Fix a start or end time after the fact.' },
   { name: 'Eating window', what: 'A countdown to your next planned fast.' },
   { name: 'Stages', what: 'A gentle timeline of general fasting phases, for information only.' },
   { name: 'History', what: 'Calendar, streak, average and longest fast, and a weekly chart.' },
-  { name: 'Private', what: 'Everything stays on your device. No account; export a backup any time.' },
+  { name: 'Backup', what: 'Export your data any time. Everything stays on your device; no account.' },
 ]
 
 export default function App() {
@@ -42,21 +41,29 @@ export default function App() {
 
   return (
     <Shell app={fas} appName="FastClock" nav={NAV} onNavigate={navigate}>
-      <div className="mx-auto w-full max-w-3xl p-4 sm:p-8">{path === '/about' ? <About /> : <Timer />}</div>
+      <div className="mx-auto w-full max-w-3xl p-4 sm:p-8">
+        {path === '/about' ? (
+          <About />
+        ) : (
+          <>
+            <Timer />
+            <ComingNext />
+          </>
+        )}
+      </div>
       <BuildInfo />
     </Shell>
   )
 }
 
-function Timer() {
+// Features that aren't built yet, labelled plainly as upcoming.
+function ComingNext() {
   return (
-    <>
-      <PageHeader
-        title="FastClock"
-        description="Coming soon — a free fasting timer with presets, history and streaks. Private and offline."
-      />
-      <ComingSoon />
-      <ul className="mt-4 grid gap-3 sm:grid-cols-2">
+    <section aria-labelledby="next-heading" className="mt-10">
+      <h2 id="next-heading" className="mb-3 font-semibold text-[var(--ink)]">
+        Coming next
+      </h2>
+      <ul className="grid gap-3 sm:grid-cols-2">
         {FEATURES.map((feature) => (
           <li key={feature.name} className="rounded-[var(--radius)] border border-[var(--line)] p-4">
             <p className="font-semibold text-[var(--ink)]">{feature.name}</p>
@@ -64,7 +71,7 @@ function Timer() {
           </li>
         ))}
       </ul>
-    </>
+    </section>
   )
 }
 
@@ -72,12 +79,11 @@ function About() {
   return (
     <>
       <PageHeader title="About" />
-      <ComingSoon />
-      <p className="mt-4 text-[var(--muted)]">
-        FastClock will be a simple, free timer for intermittent fasting: start a fast, watch the
-        clock, and keep a private history of past fasts. Everything will stay on your device, with no
-        account, no subscription and no ads. It will offer general information only, not medical
-        advice.
+      <p className="text-[var(--muted)]">
+        FastClock is a simple, free timer for intermittent fasting: pick a goal, start a fast, and
+        watch the clock. Your fast is saved on your device, so it keeps running if you close the
+        page. There's no account, no subscription and no ads. History and streaks are on the way.
+        FastClock offers general information only, not medical advice.
       </p>
       <p className="mt-4 text-[var(--muted)]">
         FastClock is a free, MIT-licensed app on{' '}
@@ -87,14 +93,5 @@ function About() {
         .
       </p>
     </>
-  )
-}
-
-// Placeholder until the features are built. None of them work yet, so it says so plainly.
-function ComingSoon() {
-  return (
-    <p className="rounded-[var(--radius)] border border-[var(--line)] bg-[var(--panel)] p-4 text-[var(--muted)]">
-      Coming soon. FastClock is in development; the features below aren't available yet.
-    </p>
   )
 }

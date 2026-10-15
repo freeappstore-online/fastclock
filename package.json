@@ -1,6 +1,6 @@
 {
   "name": "fastclock",
-  "description": "Coming soon — a free fasting timer with presets, history and streaks. Private and offline.",
+  "description": "A free intermittent fasting timer with presets and a live progress ring. Private and offline.",
   "private": true,
   "packageManager": "pnpm@10.30.3",
   "engines": {
@@ -20,6 +20,6 @@
     "build": "pnpm --filter @fastclock/web build",
     "preview": "pnpm --filter @fastclock/web preview",
     "typecheck": "pnpm --filter @fastclock/web exec tsc -b",
-    "test": "pnpm --filter @fastclock/web exec tsc -b"
+    "test": "pnpm typecheck && pnpm --filter @fastclock/web test"
   }
 }
