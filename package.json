@@ -1,10 +1,20 @@
 {
   "name": "fastclock",
+  "description": "Coming soon — a free fasting timer with presets, history and streaks. Private and offline.",
   "private": true,
   "packageManager": "pnpm@10.30.3",
-  "engines": { "node": ">=22" },
-  "pnpm": { "onlyBuiltDependencies": ["esbuild"] },
-  "repository": { "type": "git", "url": "git+https://github.com/freeappstore-online/fastclock.git" },
+  "engines": {
+    "node": ">=22"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/freeappstore-online/fastclock.git"
+  },
   "scripts": {
     "dev": "pnpm --filter @fastclock/web dev",
     "build": "pnpm --filter @fastclock/web build",
