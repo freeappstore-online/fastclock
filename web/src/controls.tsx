@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react'
 export const linkButton =
   'min-h-11 px-2 text-sm font-semibold text-[var(--accent-deep)] underline underline-offset-2 hover:text-[var(--accent)] focus-visible:outline-2 focus-visible:outline-[var(--accent)]'
 export const solidButton =
-  'min-h-11 rounded-full bg-[var(--accent)] px-5 text-sm font-semibold text-white hover:bg-[var(--accent-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]'
+  'fc-btn-primary min-h-11 rounded-full px-5 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]'
 export const dangerButton =
   'min-h-11 rounded-full bg-[var(--danger)] px-5 text-sm font-semibold text-white hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--danger)]'
 export const inputClass =

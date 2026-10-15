@@ -36,9 +36,12 @@ describe('stages', () => {
   })
 })
 
-// Acceptance for #207: no medical or weight-loss claims anywhere in the copy.
+// Acceptance for #207 and #210: no medical or weight-loss claims anywhere in the copy.
 const CLAIMS =
-  /\b(weight|lose|losing|slim|fat|burn|calori|ketosis|ketone|autophag|detox|cleans|insulin|glucose|blood sugar|hormone|metaboli|longevity|heal(?:s|ing|ed)?\b|cure|immun|inflammat|repair|regenerat|anti-?aging|boost|benefit)/i
+  /\b(weight|lose|losing|slim|fat|burn|calori|ketosis|ketone|autophag|detox|cleans|insulin|glucose|blood sugar|hormone|metaboli|longevity|heal(?:s|ing|ed)?\b|cure|treat(?:s|ment|ing)?\b|diagnos|therap|prescri|immun|inflammat|repair|regenerat|anti-?aging|boost|benefit)/i
+
+/** "Medical" may only appear in a disclaimer ("not medical advice"). */
+const MEDICAL_OUTSIDE_DISCLAIMER = (text: string) => text.replace(/not medical advice/gi, '').match(/\bmedical\b/i)
 
 describe('copy has no medical or weight-loss claims', () => {
   it('in the stages and disclaimer', () => {
@@ -47,19 +50,33 @@ describe('copy has no medical or weight-loss claims', () => {
       expect(s.description).not.toMatch(CLAIMS)
     }
     expect(STAGES_DISCLAIMER).not.toMatch(CLAIMS)
-    expect(STAGES_DISCLAIMER).toMatch(/not medical advice/)
+    expect(STAGES_DISCLAIMER).toMatch(/general information .*not medical advice/)
   })
 
-  it('in any screen', () => {
-    const sources = import.meta.glob(['./*.tsx', '../index.html', '../public/manifest.json'], {
-      query: '?raw',
-      import: 'default',
-      eager: true,
-    })
-    expect(Object.keys(sources).length).toBeGreaterThan(2)
+  it('in any screen, module, page or manifest', () => {
+    const sources = import.meta.glob(
+      ['./*.tsx', './*.ts', '!./*.test.ts', '../index.html', '../public/manifest.json'],
+      { query: '?raw', import: 'default', eager: true },
+    )
+    expect(Object.keys(sources).length).toBeGreaterThan(10)
     for (const [file, text] of Object.entries(sources)) {
       const match = (text as string).match(CLAIMS)
       expect(match?.[0], `${file} mentions "${match?.[0]}"`).toBeUndefined()
+      expect(MEDICAL_OUTSIDE_DISCLAIMER(text as string)?.[0], `${file} says "medical" outside a disclaimer`).toBeUndefined()
+    }
+  })
+
+  it('the general-information note is on the Timer (stages) and About screens', () => {
+    const screens = import.meta.glob(['./App.tsx'], { query: '?raw', import: 'default', eager: true })
+    expect(Object.values(screens)[0]).toMatch(/general information only, not medical advice/)
+  })
+
+  it('the scan catches claims', () => {
+    for (const bad of ['lose weight fast', 'burns fat', 'treats diabetes', 'helps diagnose', 'a medical benefit']) {
+      expect(CLAIMS.test(bad) || MEDICAL_OUTSIDE_DISCLAIMER(bad) !== null, bad).toBe(true)
+    }
+    for (const ok of ['not medical advice', 'health professional', 'counted as an accidental tap']) {
+      expect(CLAIMS.test(ok) || MEDICAL_OUTSIDE_DISCLAIMER(ok) !== null, ok).toBe(false)
     }
   })
 })

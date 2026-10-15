@@ -1,6 +1,6 @@
 // General fasting phases, by hours since the fast started. This is general
 // information only: the copy describes time, never effects on the body, and
-// makes no medical or weight-loss claims (stages.test.ts checks for them).
+// makes no health claims (stages.test.ts scans all copy for claim words).
 
 import { HOUR } from './fast'
 

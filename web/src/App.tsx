@@ -36,18 +36,21 @@ export default function App() {
 
   return (
     <Shell app={fas} appName="FastClock" nav={NAV} onNavigate={navigate}>
-      <div className="mx-auto w-full max-w-3xl p-4 sm:p-8">
-        {path === '/about' ? (
-          <About onNavigate={navigate} />
-        ) : path === '/history' ? (
-          <HistoryScreen />
-        ) : path === '/privacy' ? (
-          <Privacy />
-        ) : (
-          <Timer onNavigate={navigate} />
-        )}
+      {/* Each screen scrolls inside the app frame; the page itself never does. */}
+      <div className="fc-page">
+        <div className="mx-auto w-full max-w-3xl p-4 sm:p-8">
+          {path === '/about' ? (
+            <About onNavigate={navigate} />
+          ) : path === '/history' ? (
+            <HistoryScreen />
+          ) : path === '/privacy' ? (
+            <Privacy />
+          ) : (
+            <Timer onNavigate={navigate} />
+          )}
+        </div>
+        <BuildInfo />
       </div>
-      <BuildInfo />
     </Shell>
   )
 }

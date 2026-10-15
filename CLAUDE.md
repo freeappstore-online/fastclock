@@ -11,7 +11,9 @@ note, JSON export/import, erase (`web/src/backup.ts`). v1 per freeappstore-onlin
 - Dev: `pnpm install && pnpm dev`
 - Build: `pnpm build`
 - Test: `pnpm test` (typecheck + vitest; tests run with TZ=America/New_York so DST is exercised)
-- Check: `fas check`
+- E2E: `pnpm e2e` (build + Playwright in `e2e/`: flows, offline PWA, axe in both themes)
+- Check: `fas check` and `fas screencheck --skip-build` (after `pnpm build`; on Windows the CLI
+  can't spawn pnpm itself). Screens scroll inside `.fc-page`; the document must never scroll.
 - Deploy: `git push origin main` (auto-deploys to R2 via GitHub Actions)
 
 ## Notes

@@ -19,6 +19,7 @@ Built for [freeappstore-online/platform#203](https://github.com/freeappstore-onl
 pnpm install
 pnpm dev      # local dev server
 pnpm test     # typecheck + unit tests
+pnpm e2e      # build + Playwright end-to-end tests
 pnpm build    # production build in web/dist
 fas check     # FreeAppStore compliance checks
 ```

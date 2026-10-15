@@ -81,8 +81,8 @@ export default function Timer({ onNavigate }: { onNavigate: (href: string) => vo
         <button
           type="button"
           onClick={toggle}
-          className={`min-h-14 w-full max-w-xs rounded-full px-8 text-lg font-semibold text-white shadow-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] ${
-            fast ? 'bg-[var(--ink)] hover:opacity-90' : 'bg-[var(--accent)] hover:bg-[var(--accent-deep)]'
+          className={`min-h-14 w-full max-w-xs rounded-full px-8 text-lg font-semibold shadow-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] ${
+            fast ? 'fc-btn-ink' : 'fc-btn-primary'
           }`}
         >
           {fast ? 'End fast' : 'Start fast'}
@@ -270,7 +270,7 @@ function GoalPicker({ goal, onChange }: { goal: Goal; onChange: (goal: Goal) => 
   const chip = (selected: boolean) =>
     `min-h-11 rounded-full border px-4 text-sm font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] ${
       selected
-        ? 'border-[var(--accent)] bg-[var(--accent)] text-white'
+        ? 'fc-btn-primary border-transparent'
         : 'border-[var(--line-strong)] bg-[var(--panel)] text-[var(--ink)] hover:border-[var(--accent)]'
     }`
 

@@ -208,7 +208,7 @@ function Calendar({ marks, now }: { marks: Map<string, DayMark>; now: number }) 
         </h2>
         <div className="flex">
           <button type="button" className={linkButton} onClick={() => shift(-1)} aria-label="Previous month">
-            ‹ Prev
+            ‹ Previous
           </button>
           <button
             type="button"

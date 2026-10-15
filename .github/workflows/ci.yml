@@ -19,3 +19,42 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm typecheck
       - run: pnpm --filter @fastclock/web test
+
+  # End-to-end and platform compliance against the production build.
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm build
+
+      # Serve the build in the background; Playwright reuses it (see playwright.config.ts).
+      - name: Start preview server
+        run: |
+          pnpm --filter @fastclock/web exec vite preview --port 4173 --strictPort > preview.log 2>&1 &
+          for i in $(seq 1 30); do curl -sf http://localhost:4173/ > /dev/null && exit 0; sleep 1; done
+          cat preview.log; exit 1
+
+      - name: Playwright e2e
+        run: pnpm exec playwright test
+
+      - name: fas check
+        run: npx -y @freeappstore/cli@0.4 check
+
+      - name: fas screencheck (portrait + landscape)
+        run: npx -y @freeappstore/cli@0.4 screencheck --skip-build
+
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7
