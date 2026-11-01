@@ -10,10 +10,10 @@ export default function StagesTimeline({ fast, now }: { fast: ActiveFast | null;
 
   return (
     <section aria-labelledby="stages-heading" className="mt-8">
-      <h2 id="stages-heading" className="mb-1 font-semibold text-[var(--ink)]">
+      <h2 id="stages-heading" className="mb-1 font-semibold text-ink">
         Fasting stages
       </h2>
-      <p className="mb-4 text-sm text-[var(--muted)]">
+      <p className="mb-4 text-sm text-muted">
         {fast
           ? `You're in the ${STAGES[current].name.toLowerCase()} stage.${
               untilNext !== null ? ` Next stage in ${formatClock(untilNext)}.` : ''
@@ -36,35 +36,35 @@ export default function StagesTimeline({ fast, now }: { fast: ActiveFast | null;
                 <span
                   className={`mt-1 h-4 w-4 shrink-0 rounded-full border-2 ${
                     isCurrent
-                      ? 'border-[var(--accent)] bg-[var(--accent)] ring-4 ring-[var(--accent-soft)]'
+                      ? 'border-accent bg-accent ring-4 ring-accent-soft'
                       : passed
-                        ? 'border-[var(--accent)] bg-[var(--accent)]'
-                        : 'border-[var(--line-strong)] bg-[var(--paper)]'
+                        ? 'border-accent bg-accent'
+                        : 'border-line-strong bg-paper'
                   }`}
                 />
                 {next && (
-                  <span className={`mt-1 w-0.5 flex-1 ${passed ? 'bg-[var(--accent)]' : 'bg-[var(--line-strong)]'}`} />
+                  <span className={`mt-1 w-0.5 flex-1 ${passed ? 'bg-accent' : 'bg-line-strong'}`} />
                 )}
               </div>
               <div
-                className={`flex-1 rounded-[var(--radius)] p-3 ${
-                  isCurrent ? 'border border-[var(--accent)] bg-[var(--panel-strong)]' : ''
+                className={`flex-1 rounded-fas p-3 ${
+                  isCurrent ? 'border border-accent bg-panel-strong' : ''
                 }`}
               >
                 <p className="flex flex-wrap items-baseline justify-between gap-x-3">
-                  <span className={`font-semibold ${isCurrent || passed ? 'text-[var(--ink)]' : 'text-[var(--muted)]'}`}>
+                  <span className={`font-semibold ${isCurrent || passed ? 'text-ink' : 'text-muted'}`}>
                     {stage.name}
                     {isCurrent && <span className="sr-only"> (current stage)</span>}
                   </span>
-                  <span className="text-xs text-[var(--muted)] tabular-nums">
+                  <span className="text-xs text-muted tabular-nums">
                     {next ? `${stage.fromHours}–${next.fromHours}h` : `${stage.fromHours}h+`}
                   </span>
                 </p>
-                <p className="text-sm text-[var(--muted)]">{stage.description}</p>
+                <p className="text-sm text-muted">{stage.description}</p>
                 {isCurrent && next && (
-                  <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-[var(--line-strong)]" aria-hidden="true">
+                  <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-line-strong" aria-hidden="true">
                     <div
-                      className="h-full rounded-full bg-[var(--accent)]"
+                      className="h-full rounded-full bg-accent"
                       style={{ width: `${stageProgress(i, elapsed) * 100}%` }}
                     />
                   </div>
@@ -74,7 +74,7 @@ export default function StagesTimeline({ fast, now }: { fast: ActiveFast | null;
           )
         })}
       </ol>
-      <p className="mt-4 rounded-[var(--radius)] border border-[var(--line)] bg-[var(--panel)] p-3 text-sm text-[var(--muted)]">
+      <p className="mt-4 rounded-fas border border-line bg-panel p-3 text-sm text-muted">
         {STAGES_DISCLAIMER}
       </p>
     </section>

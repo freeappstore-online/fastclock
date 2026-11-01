@@ -46,17 +46,17 @@ export default function HistoryScreen() {
         <Stat label="Average fast" value={average === null ? '—' : formatGoal(average)} />
         <Stat label="Longest fast" value={longest ? formatGoal(longest.endMs - longest.startMs) : '—'} />
       </dl>
-      <p className="mt-2 text-xs text-[var(--muted)]">
+      <p className="mt-2 text-xs text-muted">
         A streak counts days in a row with at least one fast that reached its goal.
       </p>
       <WeeklyChart totals={dailyTotals(fasts, now, 7, active)} />
       <Calendar marks={calendarMarks(fasts)} now={now} />
       <section aria-labelledby="list-heading" className="mt-8">
-        <h2 id="list-heading" className="mb-3 font-semibold text-[var(--ink)]">
+        <h2 id="list-heading" className="mb-3 font-semibold text-ink">
           All fasts
         </h2>
         {fasts.length === 0 ? (
-          <p className="text-[var(--muted)]">No fasts yet. Finished fasts will appear here.</p>
+          <p className="text-muted">No fasts yet. Finished fasts will appear here.</p>
         ) : (
           <ul className="flex flex-col gap-2">
             {newestFirst(fasts).map((f) => (
@@ -71,9 +71,9 @@ export default function HistoryScreen() {
 
 function Stat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-[var(--radius)] border border-[var(--line)] bg-[var(--panel)] p-3">
-      <dt className="text-xs text-[var(--muted)]">{label}</dt>
-      <dd className="font-[Fraunces] text-2xl font-semibold text-[var(--ink)] tabular-nums">{value}</dd>
+    <div className="rounded-fas border border-line bg-panel p-3">
+      <dt className="text-xs text-muted">{label}</dt>
+      <dd className="font-[Fraunces] text-2xl font-semibold text-ink tabular-nums">{value}</dd>
     </div>
   )
 }
@@ -106,10 +106,10 @@ function WeeklyChart({ totals }: { totals: DayTotal[] }) {
 
   return (
     <section aria-labelledby="week-heading" className="mt-8">
-      <h2 id="week-heading" className="font-semibold text-[var(--ink)]">
+      <h2 id="week-heading" className="font-semibold text-ink">
         Fasting hours, last 7 days
       </h2>
-      <p className="mb-2 text-sm text-[var(--muted)]">Total {hoursText(total)}. Fasts that cross midnight count on both days.</p>
+      <p className="mb-2 text-sm text-muted">Total {hoursText(total)}. Fasts that cross midnight count on both days.</p>
       <figure className="relative">
         <svg viewBox={`0 0 ${W} ${H}`} className="w-full" role="img" aria-label={summary} onMouseLeave={() => setHover(null)}>
           {ticks.map((t) => (
@@ -148,7 +148,7 @@ function WeeklyChart({ totals }: { totals: DayTotal[] }) {
         {hover !== null && (
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute top-0 -translate-x-1/2 rounded-[var(--radius-sm)] border border-[var(--line)] bg-[var(--panel-strong)] px-2 py-1 text-xs whitespace-nowrap text-[var(--ink)] shadow-sm"
+            className="pointer-events-none absolute top-0 -translate-x-1/2 rounded-fas-sm border border-line bg-panel-strong px-2 py-1 text-xs whitespace-nowrap text-ink shadow-sm"
             style={{ left: `${((left + hover * slot + slot / 2) / W) * 100}%` }}
           >
             {fullDay(totals[hover].start)}: <strong className="tabular-nums">{hoursText(totals[hover].ms)}</strong>
@@ -156,11 +156,11 @@ function WeeklyChart({ totals }: { totals: DayTotal[] }) {
         )}
       </figure>
       <details className="mt-2 text-sm">
-        <summary className="min-h-11 cursor-pointer py-2 text-[var(--accent-deep)]">Show as table</summary>
+        <summary className="min-h-11 cursor-pointer py-2 text-accent-deep">Show as table</summary>
         <table className="mt-1 w-full max-w-sm text-left">
           <caption className="sr-only">Fasting hours per day, last 7 days</caption>
           <thead>
-            <tr className="border-b border-[var(--line)] text-[var(--muted)]">
+            <tr className="border-b border-line text-muted">
               <th scope="col" className="py-1 font-medium">
                 Day
               </th>
@@ -171,11 +171,11 @@ function WeeklyChart({ totals }: { totals: DayTotal[] }) {
           </thead>
           <tbody>
             {totals.map((t) => (
-              <tr key={t.key} className="border-b border-[var(--line)]">
-                <th scope="row" className="py-1 font-normal text-[var(--ink)]">
+              <tr key={t.key} className="border-b border-line">
+                <th scope="row" className="py-1 font-normal text-ink">
                   {fullDay(t.start)}
                 </th>
-                <td className="py-1 text-right text-[var(--ink)] tabular-nums">{hoursText(t.ms)}</td>
+                <td className="py-1 text-right text-ink tabular-nums">{hoursText(t.ms)}</td>
               </tr>
             ))}
           </tbody>
@@ -203,7 +203,7 @@ function Calendar({ marks, now }: { marks: Map<string, DayMark>; now: number }) 
   return (
     <section aria-labelledby="calendar-heading" className="mt-8">
       <div className="mb-2 flex items-center justify-between">
-        <h2 id="calendar-heading" className="font-semibold text-[var(--ink)]" aria-live="polite">
+        <h2 id="calendar-heading" className="font-semibold text-ink" aria-live="polite">
           {title}
         </h2>
         <div className="flex">
@@ -226,7 +226,7 @@ function Calendar({ marks, now }: { marks: Map<string, DayMark>; now: number }) 
         <thead>
           <tr>
             {WEEKDAYS.map((d) => (
-              <th key={d} scope="col" className="pb-1 text-xs font-medium text-[var(--muted)]">
+              <th key={d} scope="col" className="pb-1 text-xs font-medium text-muted">
                 {d}
               </th>
             ))}
@@ -250,11 +250,11 @@ function Calendar({ marks, now }: { marks: Map<string, DayMark>; now: number }) 
                       aria-current={key === todayKey ? 'date' : undefined}
                       className={`mx-auto flex h-9 w-9 items-center justify-center rounded-full tabular-nums ${
                         mark?.goalMet
-                          ? 'bg-[var(--chart-bar)] font-semibold text-[var(--chart-bar-ink)]'
+                          ? 'bg-chart-bar font-semibold text-chart-bar-ink'
                           : mark
-                            ? 'border-2 border-[var(--chart-bar)] text-[var(--ink)]'
-                            : 'text-[var(--muted)]'
-                      } ${key === todayKey ? 'outline-2 outline-offset-2 outline-[var(--ink)]' : ''}`}
+                            ? 'border-2 border-chart-bar text-ink'
+                            : 'text-muted'
+                      } ${key === todayKey ? 'outline-2 outline-offset-2 outline-ink' : ''}`}
                     >
                       {n}
                     </span>
@@ -265,15 +265,15 @@ function Calendar({ marks, now }: { marks: Map<string, DayMark>; now: number }) 
           ))}
         </tbody>
       </table>
-      <ul className="mt-2 flex flex-wrap gap-4 text-xs text-[var(--muted)]" aria-label="Calendar key">
+      <ul className="mt-2 flex flex-wrap gap-4 text-xs text-muted" aria-label="Calendar key">
         <li className="flex items-center gap-1.5">
-          <span className="h-3 w-3 rounded-full bg-[var(--chart-bar)]" aria-hidden="true" /> Goal met
+          <span className="h-3 w-3 rounded-full bg-chart-bar" aria-hidden="true" /> Goal met
         </li>
         <li className="flex items-center gap-1.5">
-          <span className="h-3 w-3 rounded-full border-2 border-[var(--chart-bar)]" aria-hidden="true" /> Fasted, goal not met
+          <span className="h-3 w-3 rounded-full border-2 border-chart-bar" aria-hidden="true" /> Fasted, goal not met
         </li>
         <li className="flex items-center gap-1.5">
-          <span className="h-3 w-3 rounded-full outline-2 outline-[var(--ink)]" aria-hidden="true" /> Today
+          <span className="h-3 w-3 rounded-full outline-2 outline-ink" aria-hidden="true" /> Today
         </li>
       </ul>
     </section>

@@ -18,12 +18,12 @@ function Section({ id, title, children }: { id: string; title: string; children:
   return (
     <section
       aria-labelledby={id}
-      className="mt-4 rounded-[var(--radius)] border border-[var(--line)] bg-[var(--panel)] p-4"
+      className="mt-4 rounded-fas border border-line bg-panel p-4"
     >
-      <h2 id={id} className="font-semibold text-[var(--ink)]">
+      <h2 id={id} className="font-semibold text-ink">
         {title}
       </h2>
-      <div className="mt-2 grid gap-3 text-sm text-[var(--muted)]">{children}</div>
+      <div className="mt-2 grid gap-3 text-sm text-muted">{children}</div>
     </section>
   )
 }
@@ -64,7 +64,7 @@ export function PrivacyNote() {
 }
 
 const quietButton =
-  'min-h-11 rounded-full border border-[var(--line-strong)] px-5 text-sm font-semibold text-[var(--ink)] hover:border-[var(--accent)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]'
+  'min-h-11 rounded-full border border-line-strong px-5 text-sm font-semibold text-ink hover:border-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent'
 
 function download(name: string, text: string) {
   const url = URL.createObjectURL(new Blob([text], { type: 'application/json' }))
@@ -133,19 +133,19 @@ function BackupSection() {
         />
       </div>
       {message && (
-        <p role="status" className="text-[var(--ink)]">
+        <p role="status" className="text-ink">
           {message}
         </p>
       )}
       {error && (
-        <p role="alert" className="font-medium text-[var(--danger)]">
+        <p role="alert" className="font-medium text-danger">
           {error}
         </p>
       )}
       <p>
         <button
           type="button"
-          className={`${linkButton} px-0 text-[var(--danger)] hover:text-[var(--danger)]`}
+          className={`${linkButton} px-0 text-danger hover:text-danger`}
           onClick={() => setErasing(true)}
         >
           Erase all FastClock data on this device

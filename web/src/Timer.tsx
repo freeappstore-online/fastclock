@@ -81,7 +81,7 @@ export default function Timer({ onNavigate }: { onNavigate: (href: string) => vo
         <button
           type="button"
           onClick={toggle}
-          className={`min-h-14 w-full max-w-xs rounded-full px-8 text-lg font-semibold shadow-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] ${
+          className={`min-h-14 w-full max-w-xs rounded-full px-8 text-lg font-semibold shadow-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${
             fast ? 'fc-btn-ink' : 'fc-btn-primary'
           }`}
         >
@@ -93,7 +93,7 @@ export default function Timer({ onNavigate }: { onNavigate: (href: string) => vo
       <GoalPicker goal={goal} onChange={chooseGoal} />
       <StagesTimeline fast={fast} now={now} />
       {last && (
-        <p className="mt-8 text-sm text-[var(--muted)]">
+        <p className="mt-8 text-sm text-muted">
           Last fast: {formatGoal(fastLength(last))} of {formatGoal(last.goalMs)}
           {goalMet(last) ? ', goal reached' : ''}.{' '}
           <a
@@ -120,7 +120,7 @@ function ActiveStart({ fast, now, onSaved }: { fast: ActiveFast; now: number; on
 
   if (!editing)
     return (
-      <p className="text-center text-sm text-[var(--muted)]">
+      <p className="text-center text-sm text-muted">
         Started {describeInstant(fast.startedAt, now)} ·{' '}
         <button
           type="button"
@@ -148,7 +148,7 @@ function ActiveStart({ fast, now, onSaved }: { fast: ActiveFast; now: number; on
 
   return (
     <form onSubmit={save} noValidate className="flex w-full max-w-sm flex-col items-center gap-2">
-      <label className="flex flex-wrap items-center justify-center gap-2 text-sm text-[var(--ink)]">
+      <label className="flex flex-wrap items-center justify-center gap-2 text-sm text-ink">
         Started at
         <input
           type="datetime-local"
@@ -178,19 +178,19 @@ function ActiveStart({ fast, now, onSaved }: { fast: ActiveFast; now: number; on
 function EatingWindow({ last, goal, now }: { last: FastRecord; goal: Goal; now: number }) {
   const left = eatingWindowCountdown(last, goal.goalMs, now)
   return (
-    <div className="w-full max-w-sm rounded-[var(--radius)] border border-[var(--line)] bg-[var(--panel)] p-4 text-center">
+    <div className="w-full max-w-sm rounded-fas border border-line bg-panel p-4 text-center">
       {left > 0 ? (
         <>
-          <p className="text-sm text-[var(--muted)]">Eating window · next fast in</p>
-          <p className="font-[Fraunces] text-3xl font-semibold text-[var(--ink)] tabular-nums" role="timer">
+          <p className="text-sm text-muted">Eating window · next fast in</p>
+          <p className="font-[Fraunces] text-3xl font-semibold text-ink tabular-nums" role="timer">
             {formatClock(left)}
           </p>
-          <p className="text-sm text-[var(--muted)]">
+          <p className="text-sm text-muted">
             Starts {describeInstant(nextFastAt(last, goal.goalMs), now)}
           </p>
         </>
       ) : (
-        <p className="text-sm text-[var(--muted)]">Your eating window has ended. Start your next fast when you're ready.</p>
+        <p className="text-sm text-muted">Your eating window has ended. Start your next fast when you're ready.</p>
       )}
     </div>
   )
@@ -237,20 +237,20 @@ function Ring({ fast, goal, now }: { fast: ActiveFast | null; goal: Goal; now: n
         />
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 px-6 text-center">
-        <p className="text-xs font-semibold tracking-wide text-[var(--muted)] uppercase">
+        <p className="text-xs font-semibold tracking-wide text-muted uppercase">
           {fast ? 'Elapsed' : 'Ready'}
         </p>
-        <p className="font-[Fraunces] text-5xl font-semibold text-[var(--ink)] tabular-nums sm:text-6xl" aria-hidden="true">
+        <p className="font-[Fraunces] text-5xl font-semibold text-ink tabular-nums sm:text-6xl" aria-hidden="true">
           {hours}
-          <span className="text-2xl text-[var(--muted)]">h</span> {String(minutes).padStart(2, '0')}
-          <span className="text-2xl text-[var(--muted)]">m</span>
+          <span className="text-2xl text-muted">h</span> {String(minutes).padStart(2, '0')}
+          <span className="text-2xl text-muted">m</span>
         </p>
-        <p className="text-xl font-medium text-[var(--muted)] tabular-nums" aria-hidden="true">
+        <p className="text-xl font-medium text-muted tabular-nums" aria-hidden="true">
           {String(seconds).padStart(2, '0')}s
         </p>
-        <p className="mt-1 text-sm text-[var(--ink)] tabular-nums">{caption}</p>
+        <p className="mt-1 text-sm text-ink tabular-nums">{caption}</p>
         {fast && !done && (
-          <p className="text-xs text-[var(--muted)]">Goal {describeInstant(goalReachedAt(fast), now)}</p>
+          <p className="text-xs text-muted">Goal {describeInstant(goalReachedAt(fast), now)}</p>
         )}
       </div>
     </div>
@@ -268,15 +268,15 @@ function GoalPicker({ goal, onChange }: { goal: Goal; onChange: (goal: Goal) => 
   }
 
   const chip = (selected: boolean) =>
-    `min-h-11 rounded-full border px-4 text-sm font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] ${
+    `min-h-11 rounded-full border px-4 text-sm font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${
       selected
         ? 'fc-btn-primary border-transparent'
-        : 'border-[var(--line-strong)] bg-[var(--panel)] text-[var(--ink)] hover:border-[var(--accent)]'
+        : 'border-line-strong bg-panel text-ink hover:border-accent'
     }`
 
   return (
     <section aria-labelledby="goal-heading" className="mt-6">
-      <h2 id="goal-heading" className="mb-3 font-semibold text-[var(--ink)]">
+      <h2 id="goal-heading" className="mb-3 font-semibold text-ink">
         Fasting goal
       </h2>
       <div className="flex flex-wrap gap-2">
@@ -296,7 +296,7 @@ function GoalPicker({ goal, onChange }: { goal: Goal; onChange: (goal: Goal) => 
         </button>
       </div>
       {isCustom && (
-        <label className="mt-3 flex items-center gap-2 text-sm text-[var(--ink)]">
+        <label className="mt-3 flex items-center gap-2 text-sm text-ink">
           Hours
           <input
             type="number"
@@ -306,9 +306,9 @@ function GoalPicker({ goal, onChange }: { goal: Goal; onChange: (goal: Goal) => 
             step="0.5"
             value={hours}
             onChange={(e) => applyCustom(e.target.value)}
-            className="min-h-11 w-24 rounded-[var(--radius)] border border-[var(--line-strong)] bg-[var(--paper)] px-3 text-[var(--ink)]"
+            className="min-h-11 w-24 rounded-fas border border-line-strong bg-paper px-3 text-ink"
           />
-          <span className="text-[var(--muted)]">
+          <span className="text-muted">
             ({MIN_CUSTOM_HOURS}–{MAX_CUSTOM_HOURS})
           </span>
         </label>

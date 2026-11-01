@@ -59,13 +59,13 @@ function About({ onNavigate }: { onNavigate: (href: string) => void }) {
   return (
     <>
       <PageHeader title="About" />
-      <p className="text-[var(--muted)]">
+      <p className="text-muted">
         FastClock is a simple, free timer for intermittent fasting: pick a goal, start a fast, and
         watch the clock. Your fast is saved on your device, so it keeps running if you close the
         page. Your history, streak and weekly chart are on the History screen. There's no account, no
         subscription and no ads. FastClock offers general information only, not medical advice.
       </p>
-      <p className="mt-4 text-[var(--muted)]">
+      <p className="mt-4 text-muted">
         Everything you enter stays on this device.{' '}
         <a
           href="/privacy"
@@ -79,7 +79,7 @@ function About({ onNavigate }: { onNavigate: (href: string) => void }) {
         </a>
         .
       </p>
-      <p className="mt-4 text-[var(--muted)]">
+      <p className="mt-4 text-muted">
         FastClock is a free, MIT-licensed app on{' '}
         <a href="https://freeappstore.online" className="underline">
           FreeAppStore

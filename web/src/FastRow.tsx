@@ -45,11 +45,11 @@ export default function FastRow({ fast, now, onSaved }: { fast: FastRecord; now:
   }
 
   return (
-    <li className="rounded-[var(--radius)] border border-[var(--line)] p-3">
+    <li className="rounded-fas border border-line p-3">
       {mode === 'edit' ? (
         <form onSubmit={save} noValidate className="flex flex-col gap-2">
           <div className="flex flex-wrap gap-3">
-            <label className="flex flex-col gap-1 text-sm text-[var(--ink)]">
+            <label className="flex flex-col gap-1 text-sm text-ink">
               Start
               <input
                 type="datetime-local"
@@ -62,7 +62,7 @@ export default function FastRow({ fast, now, onSaved }: { fast: FastRecord; now:
                 autoFocus
               />
             </label>
-            <label className="flex flex-col gap-1 text-sm text-[var(--ink)]">
+            <label className="flex flex-col gap-1 text-sm text-ink">
               End
               <input
                 type="datetime-local"
@@ -89,14 +89,14 @@ export default function FastRow({ fast, now, onSaved }: { fast: FastRecord; now:
         <>
           <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
             <div>
-              <p className="font-semibold text-[var(--ink)] tabular-nums">
+              <p className="font-semibold text-ink tabular-nums">
                 {formatGoal(length)}
-                <span className="font-normal text-[var(--muted)]"> of {formatGoal(fast.goalMs)} · </span>
-                <span className={met ? 'text-[var(--success)]' : 'font-normal text-[var(--muted)]'}>
+                <span className="font-normal text-muted"> of {formatGoal(fast.goalMs)} · </span>
+                <span className={met ? 'text-success' : 'font-normal text-muted'}>
                   {met ? '✓ Goal met' : 'Goal not met'}
                 </span>
               </p>
-              <p className="text-sm text-[var(--muted)]">
+              <p className="text-sm text-muted">
                 {when} → {describeInstant(fast.endMs, now)}
               </p>
             </div>
@@ -120,9 +120,9 @@ export default function FastRow({ fast, now, onSaved }: { fast: FastRecord; now:
             <div
               role="alertdialog"
               aria-label="Delete this fast?"
-              className="mt-3 flex flex-wrap items-center gap-2 border-t border-[var(--line)] pt-3"
+              className="mt-3 flex flex-wrap items-center gap-2 border-t border-line pt-3"
             >
-              <p className="text-sm text-[var(--ink)]">Delete this fast? This can't be undone.</p>
+              <p className="text-sm text-ink">Delete this fast? This can't be undone.</p>
               <button type="button" className={dangerButton} onClick={remove} autoFocus>
                 Delete
               </button>
